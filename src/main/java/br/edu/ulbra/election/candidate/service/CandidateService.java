@@ -1,8 +1,6 @@
 package br.edu.ulbra.election.candidate.service;
 
 import br.edu.ulbra.election.candidate.repository.CandidateRepository;
-import br.edu.ulbra.election.election.repository.ElectionRepository;
-import br.edu.ulbra.election.party.repository.PartyRepository;
 import br.edu.ulbra.election.candidate.exception.GenericOutputException;
 import br.edu.ulbra.election.candidate.input.v1.CandidateInput;
 import br.edu.ulbra.election.candidate.model.Candidate;
@@ -17,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,33 +25,46 @@ public class CandidateService {
 
 	private final ModelMapper modelMapper;
 
-	//private final PartyRepository partyRepository;
-
-	//private final ElectionRepository electionRepository;
-
 	private static final String MESSAGE_INVALID_ID = "Invalid id";
 	private static final String MESSAGE_CANDIDATE_NOT_FOUND = "Candidate not found";
 
 	@Autowired
-	public CandidateService(CandidateRepository candidateRepository, ModelMapper modelMapper/*,
-			PartyRepository partyRepository, ElectionRepository electionRepository*/) {
+	public CandidateService(CandidateRepository candidateRepository, ModelMapper modelMapper) {
 		this.candidateRepository = candidateRepository;
 		this.modelMapper = modelMapper;
-		//this.partyRepository = partyRepository;
-		//this.electionRepository = electionRepository;
 	}
 
 	public List<CandidateOutput> getAll() {
 		Type candidateOutputListType = new TypeToken<List<CandidateOutput>>() {
 		}.getType();
-		return modelMapper.map(candidateRepository.findAll(), candidateOutputListType);
+
+		Iterable<Candidate> list = candidateRepository.findAll();
+
+		ArrayList<CandidateOutput> lista = new ArrayList<>();
+
+		list.forEach(e -> lista.add(Candidate.ajustarCandidates(e)));
+
+		return modelMapper.map(lista, candidateOutputListType);
 	}
 
 	public CandidateOutput create(CandidateInput candidateInput) {
 		validateInput(candidateInput);
+
 		Candidate candidate = modelMapper.map(candidateInput, Candidate.class);
 		candidate = candidateRepository.save(candidate);
-		return modelMapper.map(candidate, CandidateOutput.class);
+
+		ElectionOutput election = new ElectionOutput();
+		election.setId(candidate.getElectionId());
+
+		PartyOutput party = new PartyOutput();
+		party.setId(candidate.getPartyId());
+
+		CandidateOutput candidateOutput = modelMapper.map(candidate, CandidateOutput.class);
+
+		candidateOutput.setElectionOutput(election);
+		candidateOutput.setPartyOutput(party);
+
+		return candidateOutput;
 	}
 
 	public CandidateOutput getById(Long candidateId) {
@@ -65,7 +77,7 @@ public class CandidateService {
 			throw new GenericOutputException(MESSAGE_CANDIDATE_NOT_FOUND);
 		}
 
-		return modelMapper.map(candidate, CandidateOutput.class);
+		return Candidate.ajustarCandidates(candidate);
 	}
 
 	public CandidateOutput update(Long candidateId, CandidateInput candidateInput) {
@@ -84,7 +96,8 @@ public class CandidateService {
 		candidate.setPartyId(candidateInput.getPartyId());
 		candidate.setElectionId(candidateInput.getElectionId());
 		candidate = candidateRepository.save(candidate);
-		return modelMapper.map(candidate, CandidateOutput.class);
+
+		return Candidate.ajustarCandidates(candidate);
 	}
 
 	public GenericOutput delete(Long canidateId) {

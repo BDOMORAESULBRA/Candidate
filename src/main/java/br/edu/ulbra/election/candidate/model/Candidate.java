@@ -2,6 +2,10 @@ package br.edu.ulbra.election.candidate.model;
 
 import javax.persistence.*;
 
+import br.edu.ulbra.election.candidate.output.v1.CandidateOutput;
+import br.edu.ulbra.election.candidate.output.v1.ElectionOutput;
+import br.edu.ulbra.election.candidate.output.v1.PartyOutput;
+
 @Entity
 public class Candidate {
 
@@ -59,6 +63,26 @@ public class Candidate {
 
 	public void setPartyId(Long partyid) {
 		this.party_id = partyid;
+	}
+
+	public static CandidateOutput ajustarCandidates(Candidate candidate) {
+
+		ElectionOutput election = new ElectionOutput();
+		election.setId(candidate.getElectionId());
+
+		PartyOutput party = new PartyOutput();
+		party.setId(candidate.getPartyId());
+
+		CandidateOutput candidateOutput = new CandidateOutput();
+
+		candidateOutput.setId(candidate.getId());
+		candidateOutput.setName(candidate.getName());
+		candidateOutput.setNumberElection(candidate.getNumberElection());
+		candidateOutput.setElectionOutput(election);
+		candidateOutput.setPartyOutput(party);
+
+		return candidateOutput;
+
 	}
 
 }
