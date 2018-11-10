@@ -116,8 +116,13 @@ public class CandidateService {
 	}
 
 	private void validateInput(CandidateInput candidateInput) {
-		if (StringUtils.isBlank(candidateInput.getName())) {
+		if (StringUtils.isBlank(candidateInput.getName()) || candidateInput.getName().trim().replace(" ", "").length() < 5) {
 			throw new GenericOutputException("Invalid name");
+		} else {
+			String name[] = candidateInput.getName().split(" ");
+			if (name.length < 2) {
+				throw new GenericOutputException("Invalid name");
+			}
 		}
 		if (candidateInput.getNumberElection() == null) {
 			throw new GenericOutputException("Invalid number");
