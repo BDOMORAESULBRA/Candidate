@@ -51,4 +51,22 @@ public class CandidateApi {
 	public GenericOutput delete(@PathVariable Long candidateId) {
 		return candidateService.delete(candidateId);
 	}
+
+	@GetMapping("/{partyId}")
+	@ApiOperation(value = "Get if exists party in candidate")
+	public CandidateOutput verificaParty(@PathVariable Long partyId) {
+		return candidateService.verificaParty(partyId);
+	}
+
+	@GetMapping("/{electionId}")
+	@ApiOperation(value = "Get if exists election in candidate")
+	public CandidateOutput verificaElection(@PathVariable Long electionId) {
+		return candidateService.verificaElection(electionId);
+	}
+	
+	@GetMapping("/{numberElection}")
+	@ApiOperation(value = "Get candidate by number")
+	public CandidateOutput verificaNumero(@PathVariable Long numberElection) {
+		return candidateService.verificaNumero(numberElection);
+	}
 }

@@ -2,10 +2,6 @@ package br.edu.ulbra.election.candidate.model;
 
 import javax.persistence.*;
 
-import br.edu.ulbra.election.candidate.output.v1.CandidateOutput;
-import br.edu.ulbra.election.candidate.output.v1.ElectionOutput;
-import br.edu.ulbra.election.candidate.output.v1.PartyOutput;
-
 @Entity
 public class Candidate {
 
@@ -17,13 +13,13 @@ public class Candidate {
 	private String name;
 
 	@Column(nullable = false)
-	private Long party_id;
+	private Long partyId;
 
 	@Column(nullable = false)
-	private Long number;
+	private Long numberElection;
 
 	@Column(nullable = false)
-	private Long election_id;
+	private Long electionId;
 
 	public Long getId() {
 		return id;
@@ -42,47 +38,27 @@ public class Candidate {
 	}
 
 	public Long getNumberElection() {
-		return number;
+		return numberElection;
 	}
 
 	public void setNumberElection(Long numberElection) {
-		this.number = numberElection;
+		this.numberElection = numberElection;
 	}
 
 	public Long getElectionId() {
-		return election_id;
+		return electionId;
 	}
 
 	public void setElectionId(Long electionid) {
-		this.election_id = electionid;
+		this.electionId = electionid;
 	}
 
 	public Long getPartyId() {
-		return party_id;
+		return partyId;
 	}
 
 	public void setPartyId(Long partyid) {
-		this.party_id = partyid;
-	}
-
-	public static CandidateOutput ajustarCandidates(Candidate candidate) {
-
-		ElectionOutput election = new ElectionOutput();
-		election.setId(candidate.getElectionId());
-
-		PartyOutput party = new PartyOutput();
-		party.setId(candidate.getPartyId());
-
-		CandidateOutput candidateOutput = new CandidateOutput();
-
-		candidateOutput.setId(candidate.getId());
-		candidateOutput.setName(candidate.getName());
-		candidateOutput.setNumberElection(candidate.getNumberElection());
-		candidateOutput.setElectionOutput(election);
-		candidateOutput.setPartyOutput(party);
-
-		return candidateOutput;
-
+		this.partyId = partyid;
 	}
 
 }
