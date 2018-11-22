@@ -34,6 +34,24 @@ public class CandidateApi {
 		return candidateService.getById(candidateId);
 	}
 
+	@GetMapping("/getPartyCandidate/{partyId}")
+	@ApiOperation(value = "Get if exists party in candidate")
+	public CandidateOutput verificaParty(@PathVariable Long partyId) {
+		return candidateService.verificaParty(partyId);
+	}
+
+	@GetMapping("getCandidateElection/{electionId}")
+	@ApiOperation(value = "Get if exists election in candidate")
+	public CandidateOutput verificaElection(@PathVariable Long electionId) {
+		return candidateService.verificaElection(electionId);
+	}
+
+	@GetMapping("/getByElectionAndNumber/{numberElection}/{electionId}")
+	@ApiOperation(value = "Get candidate by number")
+	public CandidateOutput verificaNumero(@PathVariable Long numberElection, @PathVariable Long electionId) {
+		return candidateService.verificaNumero(numberElection, electionId);
+	}
+
 	@PostMapping("/")
 	@ApiOperation(value = "Create new candidate")
 	public CandidateOutput create(@RequestBody CandidateInput candidateInput) {
@@ -52,21 +70,4 @@ public class CandidateApi {
 		return candidateService.delete(candidateId);
 	}
 
-	@GetMapping("/{partyId}")
-	@ApiOperation(value = "Get if exists party in candidate")
-	public CandidateOutput verificaParty(@PathVariable Long partyId) {
-		return candidateService.verificaParty(partyId);
-	}
-
-	@GetMapping("/{electionId}")
-	@ApiOperation(value = "Get if exists election in candidate")
-	public CandidateOutput verificaElection(@PathVariable Long electionId) {
-		return candidateService.verificaElection(electionId);
-	}
-	
-	@GetMapping("/{numberElection}")
-	@ApiOperation(value = "Get candidate by number")
-	public CandidateOutput verificaNumero(@PathVariable Long numberElection) {
-		return candidateService.verificaNumero(numberElection);
-	}
 }

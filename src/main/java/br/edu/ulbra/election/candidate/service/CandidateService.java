@@ -47,7 +47,7 @@ public class CandidateService {
 
 	public CandidateOutput create(CandidateInput candidateInput) {
 		validateInput(candidateInput);
-		// validateDuplicate(candidateInput, null);
+		validateDuplicate(candidateInput, null);
 		Candidate candidate = modelMapper.map(candidateInput, Candidate.class);
 		candidate = candidateRepository.save(candidate);
 		return toCandidateOutput(candidate);
@@ -73,7 +73,7 @@ public class CandidateService {
 
 		verificaVotes(candidateId);
 		validateInput(candidateInput);
-		// validateDuplicate(candidateInput, candidateId);
+		validateDuplicate(candidateInput, candidateId);
 
 		Candidate candidate = candidateRepository.findById(candidateId).orElse(null);
 		if (candidate == null) {
@@ -146,14 +146,13 @@ public class CandidateService {
 		}
 	}
 
-	/*
-	 * private void validateDuplicate(CandidateInput candidateInput, Long
-	 * candidateId) { Candidate candidate =
-	 * candidateRepository.findFirstByNumberElectionAndAndElectionId(
-	 * candidateInput.getNumberElection(), candidateInput.getElectionId()); if
-	 * (candidate != null && candidate.getId() != candidateId) { throw new
-	 * GenericOutputException("Duplicate Candidate!"); } }
-	 */
+	private void validateDuplicate(CandidateInput candidateInput, Long candidateId) {
+		Candidate candidate = candidateRepository.findFirstByNumberElectionAndElectionId(
+				candidateInput.getNumberElection(), candidateInput.getElectionId());
+		if (candidate != null && candidate.getId() != candidateId) {
+			throw new GenericOutputException("Duplicate Candidate!");
+		}
+	}
 
 	public CandidateOutput toCandidateOutput(Candidate candidate) {
 		CandidateOutput candidateOutput = modelMapper.map(candidate, CandidateOutput.class);
@@ -164,44 +163,29 @@ public class CandidateService {
 		return candidateOutput;
 	}
 
-	public CandidateOutput verificaParty(Long partyId) {
-		Iterable<Candidate> list = candidateRepository.findAll();
-
-		for (Candidate c : list) {
-			if (c.getPartyId().equals(partyId)) {
-				return toCandidateOutput(c);
-			}
-		}
-		return null;
+	public CandidateOutput verificaNumero(Long numberElection, Long electionId) {
+		Candidate c = candidateRepository.findFirstByNumberElectionAndElectionId(numberElection, electionId);
+		return toCandidateOutput(c);
 	}
 
 	public CandidateOutput verificaElection(Long electionId) {
-		Iterable<Candidate> list = candidateRepository.findAll();
+		Candidate c = candidateRepository.findFirstByElectionId(electionId);
+		return toCandidateOutput(c);
+	}
 
-		for (Candidate c : list) {
-			if (c.getElectionId().equals(electionId)) {
-				return toCandidateOutput(c);
-			}
-		}
-		return null;
+	public CandidateOutput verificaParty(Long partyId) {
+		Candidate c = candidateRepository.findFirstByPartyId(partyId);
+		return toCandidateOutput(c);
 	}
 
 	private void verificaVotes(Long candidateId) {
-
-		if (electionClientService.verificaVoteForCandidate(candidateId) == false) {
-			throw new GenericOutputException("Exists votes!");
-		}
-	}
-
-	public CandidateOutput verificaNumero(Long numberElection) {
-		Iterable<Candidate> list = candidateRepository.findAll();
-
-		for (Candidate c : list) {
-			if (c.getNumberElection().equals(numberElection)) {
-				return toCandidateOutput(c);
+		try {
+			//electionClientService.verificaVoteForCandidate(candidateId);
+		} catch (FeignException e) {
+			if (e.status() == 500) {
+				throw new GenericOutputException("Exists votes!");
 			}
 		}
-		return null;
 	}
 
 }

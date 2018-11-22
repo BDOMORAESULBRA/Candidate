@@ -22,17 +22,11 @@ public class ElectionClientService {
 		return this.electionClient.getById(id);
 	}
 
-	public Boolean verificaVoteForCandidate(Long id) {
-		return this.electionClient.verificaVoteForCandidate(id);
-	}
 
 	@FeignClient(value = "election-service", url = "${url.election-service}")
 	private interface ElectionClient {
 
 		@GetMapping("/v1/election/{electionId}")
 		ElectionOutput getById(@PathVariable(name = "electionId") Long electionId);
-
-		@GetMapping("/v1/election/{electionId}")
-		Boolean verificaVoteForCandidate(@PathVariable(name = "electionId") Long electionId);
 	}
 }
