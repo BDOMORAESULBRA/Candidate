@@ -5,10 +5,9 @@ import br.edu.ulbra.election.candidate.output.v1.CandidateOutput;
 import br.edu.ulbra.election.candidate.output.v1.GenericOutput;
 import br.edu.ulbra.election.candidate.service.CandidateService;
 import io.swagger.annotations.ApiOperation;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -40,7 +39,7 @@ public class CandidateApi {
 		return candidateService.verificaParty(partyId);
 	}
 
-	@GetMapping("getCandidateElection/{electionId}")
+	@GetMapping("/getCandidateElection/{electionId}")
 	@ApiOperation(value = "Get if exists election in candidate")
 	public CandidateOutput verificaElection(@PathVariable Long electionId) {
 		return candidateService.verificaElection(electionId);
@@ -50,6 +49,12 @@ public class CandidateApi {
 	@ApiOperation(value = "Get candidate by number")
 	public CandidateOutput verificaNumero(@PathVariable Long numberElection, @PathVariable Long electionId) {
 		return candidateService.verificaNumero(numberElection, electionId);
+	}
+
+	@GetMapping("/getCandidateList/{electionId}")
+	@ApiOperation(value = "Get list of candidates")
+	public ArrayList<CandidateOutput> getListCandidatesByElectionId(@PathVariable Long electionId) {
+		return candidateService.getListCandidatesByElectionId(electionId);
 	}
 
 	@PostMapping("/")

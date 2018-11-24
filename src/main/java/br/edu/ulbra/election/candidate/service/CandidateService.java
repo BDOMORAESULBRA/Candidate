@@ -15,7 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -180,12 +180,27 @@ public class CandidateService {
 
 	private void verificaVotes(Long candidateId) {
 		try {
-			//electionClientService.verificaVoteForCandidate(candidateId);
+			Long electionId = getById(candidateId).getElectionOutput().getId();
+			if (electionClientService.getResultElectionInformation(electionId).getTotalVotes() > 0) {
+				throw new GenericOutputException("Election have votes!");
+			}
 		} catch (FeignException e) {
-			if (e.status() == 500) {
-				throw new GenericOutputException("Exists votes!");
+			throw new GenericOutputException("Error");
+		}
+	}
+
+	public ArrayList<CandidateOutput> getListCandidatesByElectionId(Long electionId) {
+
+		Iterable<Candidate> list = candidateRepository.findAll();
+
+		ArrayList<CandidateOutput> lista = new ArrayList<>();
+
+		for (Candidate c : list) {
+			if (c.getElectionId().equals(electionId)) {
+				lista.add(toCandidateOutput(c));
 			}
 		}
+		return lista;
 	}
 
 }

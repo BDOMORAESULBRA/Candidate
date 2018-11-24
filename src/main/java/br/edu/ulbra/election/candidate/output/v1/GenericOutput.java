@@ -6,18 +6,18 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "Generic Output Information")
 public class GenericOutput {
 
-    @ApiModelProperty(example = "Command OK", notes = "Output message")
-    private String message;
+	@ApiModelProperty(example = "Command OK", notes = "Output message")
+	private String message;
 
-    public GenericOutput(String message) {
-        this.message = message;
-    }
+	public GenericOutput(String message) {
+		this.message = message;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 }

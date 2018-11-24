@@ -5,8 +5,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import br.edu.ulbra.election.candidate.output.v1.ElectionOutput;
+import br.edu.ulbra.election.candidate.output.v1.ResultOutput;
 
 @Service
 public class ElectionClientService {
@@ -22,11 +22,17 @@ public class ElectionClientService {
 		return this.electionClient.getById(id);
 	}
 
+	public ResultOutput getResultElectionInformation(Long electionId) {
+		return this.electionClient.getResultByElection(electionId);
+	}
 
 	@FeignClient(value = "election-service", url = "${url.election-service}")
 	private interface ElectionClient {
 
 		@GetMapping("/v1/election/{electionId}")
 		ElectionOutput getById(@PathVariable(name = "electionId") Long electionId);
+
+		@GetMapping("/v1/result/election/{electionId}")
+		ResultOutput getResultByElection(@PathVariable(name = "electionId") Long electionId);
 	}
 }

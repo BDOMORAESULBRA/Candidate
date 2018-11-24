@@ -10,21 +10,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Service
 public class PartyClientService {
 
-    private final PartyClient partyClient;
+	private final PartyClient partyClient;
 
-    @Autowired
-    public PartyClientService(PartyClient partyClient){
-        this.partyClient = partyClient;
-    }
+	@Autowired
+	public PartyClientService(PartyClient partyClient) {
+		this.partyClient = partyClient;
+	}
 
-    public PartyOutput getById(Long id){
-        return this.partyClient.getById(id);
-    }
+	public PartyOutput getById(Long id) {
+		return this.partyClient.getById(id);
+	}
 
-    @FeignClient(value="party-service", url="${url.party-service}")
-    private interface PartyClient {
+	@FeignClient(value = "party-service", url = "${url.party-service}")
+	private interface PartyClient {
 
-        @GetMapping("/v1/party/{partyId}")
-        PartyOutput getById(@PathVariable(name = "partyId") Long partyId);
-    }
+		@GetMapping("/v1/party/{partyId}")
+		PartyOutput getById(@PathVariable(name = "partyId") Long partyId);
+	}
 }
